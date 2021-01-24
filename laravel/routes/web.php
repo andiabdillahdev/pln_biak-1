@@ -26,6 +26,7 @@ Route::post('/admin/updatepassword', 'HomeController@updatepassword');
 Route::post('/admin/updateprogress', 'HomeController@updateprogress');
 Route::post('/admin/updateakun', 'HomeController@updateakun');
 Route::get('/admin/hapuslaporan/{id}', 'HomeController@hapuslaporan');
+Route::get('/admin/getmedia/{id}', 'HomeController@getMedia');
 Route::get('/laporan/serverside', 'HomeController@laporanServerside');
 Route::post('/createlaporan', 'agentController@createlaporan');
 Route::post('/file-upload', 'agentController@upload');

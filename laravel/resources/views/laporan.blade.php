@@ -73,22 +73,21 @@
     <!-- END MAIN CONTENT -->
 </div>
 
-@foreach ($laporan as $dta)
 <!-- MODAL FOTO -->
-<div class="modal modal-foto{{ $dta->id }}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+<div class="modal modal-foto" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 <h4 class="modal-title" id="myModalLabel">Lampiran Foto Laporan</h4>
             </div>
-            <div class="modal-body">
-                @php
+            <div class="modal-body" id="set-media">
+                {{-- @php
                 $foto = $media->where('laporan_id', $dta->id)->all();
                 @endphp
                 @foreach ($foto as $ft)
                 <img src="{{ asset('assets/img/laporan/'.$ft->foto) }}" class="img-responsive img-thumbnail" style="width: 100%; margin-bottom: 10px;">
-                @endforeach
+                @endforeach --}}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary waves-effect" data-dismiss="modal">Tutup</button>
@@ -96,6 +95,8 @@
         </div>
     </div>
 </div>
+
+@foreach ($laporan as $dta)
 
 <!-- MODAL UPDATE -->
 <div class="modal modal-edt{{ $dta->id }}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
@@ -118,7 +119,7 @@
                         <label class="col-sm-3 col-form-label">Status</label>
                         <div class="col-sm-9">
                             <input type="hidden" name="id" value="{{ $dta->id }}">
-                            <select class="form-control this-sts{{ $dta->id }}" required="" name="status" id="set-status">
+                            <select class="form-control this-sts{{ $dta->id }} set-status" required="" data-id="{{ $dta->id }}" name="status">
                                 <option value="Laporan Terkirim">Laporan Terkirim</option>
                                 <option value="Laporan Diterima">Laporan Diterima</option>
                                 <option value="Sedang Ditinjau">Sedang Ditinjau</option>
@@ -126,15 +127,14 @@
                             </select>
                         </div>
                         <script type="text/javascript">
-                            $(document).ready(function($) {
-                                $('.this-sts{{ $dta->id }}').val('{{ $dta->status }}');
-                            });
+                            document.getElementsByClassName('this-sts{{ $dta->id }}')[0].value = '{{ $dta->status }}';
+                            
                         </script>
                     </div>
                     <div class="form-group row">
                         <label class="col-sm-3 col-form-label">Progres</label>
                         <div class="col-sm-3">
-                            <input type="number" class="form-control" id="set-progres" required="" placeholder="Progres..." name="progres" autocomplete="off" value="{{ $dta->progres }}" readonly="">
+                            <input type="number" class="form-control" id="set-progres{{ $dta->id }}" required="" placeholder="Progres..." name="progres" autocomplete="off" value="{{ $dta->progres }}" readonly="">
                         </div>
                         <b style="font-size: 18px;">%</b>
                     </div>
@@ -290,15 +290,30 @@
             getData(jenis, agent, date);
         });
 
-        $('#set-status').change(function(e) {
+        $('.set-status').change(function(e) {
             e.preventDefault();
 
             var value = $(this).val();
+            var id = $(this).attr('data-id');
 
-            if (value == 'Laporan Terkirim') $('#set-progres').val('20');
-            else if (value == 'Laporan Diterima') $('#set-progres').val('50');
-            else if (value == 'Sedang Ditinjau') $('#set-progres').val('75');
-            else if (value == 'Selesai') $('#set-progres').val('100');
+            if (value == 'Laporan Terkirim') $('#set-progres'+id).val('20');
+            else if (value == 'Laporan Diterima') $('#set-progres'+id).val('50');
+            else if (value == 'Sedang Ditinjau') $('#set-progres'+id).val('75');
+            else if (value == 'Selesai') $('#set-progres'+id).val('100');
+        });
+
+        $(document).on('click', '#view-media', function(e) {
+            e.preventDefault();
+
+            $('#set-media').html('');
+            var id = $(this).attr('data-id');
+            $.ajax({
+                url: "{{ url('admin/getmedia') }}/"+id,
+                method: "GET",
+                success: function (data) {
+                    $('#set-media').html(data);
+                }
+            });
         });
 
         @isset ($_GET['success'])

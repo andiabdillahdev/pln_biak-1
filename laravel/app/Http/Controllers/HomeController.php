@@ -107,6 +107,16 @@ class HomeController extends Controller
         return redirect('admin/laporan?success=delete');
     }
 
+    public function getMedia($id)
+    {
+        $media = Media::where('laporan_id', $id)->get();
+        $foto = '';
+        foreach ($media as $dta) {
+            $foto .= '<img src="'.asset('assets/img/laporan/'.$dta->foto).'" class="img-responsive img-thumbnail" style="width: 100%; margin-bottom: 10px;">';
+        }
+        return response()->json($foto, 200);
+    }
+
     public function laporanServerside(Request $request)
     {
         if ($request->req == 'dataLaporan') {
@@ -134,7 +144,7 @@ class HomeController extends Controller
             return Datatables::of($data)
             ->addColumn('action', function($dta) {
                 return '
-                <a href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target=".modal-foto'.$dta->id.'" data-toggle1="tooltip" title="Lihat Lampiran Foto"><i class="fa fa-photo"></i></a>
+                <a href="#" class="btn btn-sm btn-primary" id="view-media" data-toggle="modal" data-target=".modal-foto" data-id="'.$dta->id.'" data-toggle1="tooltip" title="Lihat Lampiran Foto"><i class="fa fa-photo"></i></a>
                 <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target=".modal-edt'.$dta->id.'" data-toggle1="tooltip" title="Update Status & Progres"><i class="fa fa-pencil"></i></a>
                 <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target=".modal-del'.$dta->id.'" data-toggle1="tooltip" title="Hapus Laporan"><i class="fa fa-trash"></i></a>';
             })->rawColumns(['action', 'status'])->toJson();
