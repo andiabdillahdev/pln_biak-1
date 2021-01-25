@@ -36,7 +36,7 @@ class HomeController extends Controller
         $laporan_new = 0;
         $laporan_thisday = 0;
         foreach ($laporan as $lap) {
-            if ($lap->progres == 0) $laporan_new = 
+            if ($lap->progres == 20) $laporan_new = 
                 $laporan_new + 1;
             if (date('dmy') == date('dmy', strtotime($lap->created_at))) 
                 $laporan_thisday = $laporan_thisday + 1;
