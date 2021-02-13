@@ -30,9 +30,10 @@
                                 <th width="10">No</th>
                                 <th>Nama</th>
                                 <th>Nomor KTP</th>
+                                <th>Email</th>
                                 <th>Telepon</th>
-                                <th>Status</th>
-                                <th width="200">Aksi</th>
+                                <th width="50">Status</th>
+                                <th width="80">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -111,10 +112,9 @@
 <script>
     function format (dta) {
         return `<div style="margin-left: 40px;">
-        <div style="margin-bottom: 10px;"><b>Email: </b><span>`+dta.email+`</span></div>
+        <div style="margin-bottom: 10px;"><b>Tanggal Bergabung: </b><span>`+dta.tggl_daftar+`</span></div>
         <div style="margin-bottom: 10px;"><b>Rekening: </b><span>`+dta.no_rekening+` (`+dta.atas_nama+`)</span></div>
         <div style="margin-bottom: 10px;"><b>Nama Bank: </b><span>`+dta.nama_bank+`</span></div>
-        <div style="margin-bottom: 10px;"><b>Tanggal Daftar: </b><span>`+dta.tggl_daftar+`</span></div>
         <hr>
         </div>`;
     }
@@ -140,6 +140,7 @@
                 { data: 'no', name: 'no' },
                 { data: 'nama', name: 'nama' },
                 { data: 'no_ktp', name: 'no_ktp' },
+                { data: 'email', name: 'email' },
                 { data: 'no_telepon', name: 'no_telepon' },
                 { data: 'status', name: 'status' },
                 { data: 'action', name: 'action', orderable: false, searchable: false },

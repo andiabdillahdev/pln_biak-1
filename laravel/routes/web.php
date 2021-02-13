@@ -32,5 +32,8 @@ Route::get('/admin/getmedia/{id}', 'HomeController@getMedia');
 Route::get('/laporan/serverside', 'HomeController@laporanServerside');
 Route::get('/admin/reward', 'HomeController@reward');
 Route::post('/admin/setreward', 'HomeController@setreward');
+Route::post('/admin/updatestatusreward', 'HomeController@updatestatusreward');
+Route::get('/admin/hapusreward/{id}', 'HomeController@hapusreward');
+Route::get('/admin/getagentajx', 'HomeController@getagentajx');
 Route::post('/createlaporan', 'agentController@createlaporan');
 Route::post('/file-upload', 'agentController@upload');

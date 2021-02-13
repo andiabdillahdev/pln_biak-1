@@ -98,7 +98,9 @@
 </div>
 
 @foreach ($laporan as $dta)
-
+@php
+$usr = $users->where('id', $dta->id_users)->first();
+@endphp
 <!-- MODAL UPDATE -->
 <div class="modal modal-edt{{ $dta->id }}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
     <div class="modal-dialog">
@@ -167,7 +169,7 @@
                 Agent yang membuat laporan tidak dapat melihat laporan ini lagi!
             </div>
             <div class="modal-footer bg-whitesmoke br">
-                <a href="{{ url('admin/hapuslaporan/'.$dta->id) }}" role="button" class="btn btn-danger btn-primary">Hapus</a>
+                <a href="{{ url('admin/hapuslaporan/'.$dta->id) }}" role="button" class="btn btn-danger">Hapus</a>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
             </div>
         </div>
@@ -196,7 +198,19 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Nama Agent</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" disabled="" value="{{ $users->where('id', $dta->id_users)->first()->name }}">
+                            <input type="text" class="form-control" disabled="" value="{{ $usr->name }}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Rekening</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" disabled="" value="{{ $usr->no_rekening }} (an: {{ $usr->atas_nama }})">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Nama Bank</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" disabled="" value="{{ $usr->nama_bank }}">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -216,7 +230,7 @@
                     <div class="form-group row">
                         <label class="col-sm-4 col-form-label">Bukti Transfer</label>
                         <div class="col-sm-8">
-                            <input type="file" class="form-control foto_bukti" name="foto_bukti">
+                            <input type="file" class="form-control foto_bukti" name="foto_bukti" required="">
                         </div>
                     </div>
                 </div>
@@ -244,6 +258,7 @@
         <div style="margin-bottom: 10px;"><b>Alamat Laporan: </b><span>`+dta.alamat+`</span></div>
         <div style="margin-bottom: 10px;"><b>Email Agent: </b><span>`+dta.email+`</span></div>
         <div style="margin-bottom: 10px;"><b>Telepon Agent: </b><span>`+dta.no_telepon+`</span></div>
+        <div style="margin-bottom: 10px;"><b>Status Reward: </b><span>`+dta.status_reward+`</span></div>
         `+dta.btn_reward+`
         <hr>
         </div>`;
@@ -440,7 +455,7 @@
             text: 'Reward berhasil dibuat!',
             type: 'success'
         }).then(function() {
-            window.history.pushState('', '', "{{ url('admin/laporan') }}")
+            location.href = "{{ url('admin/reward') }}";
         });
         @endif
         @endisset
