@@ -93,7 +93,7 @@ $usr = $users->where('id', $dta->agent_id)->first();
                     </li>
                     <li class="list-group-item row">
                         <b class="col-sm-4 p-0">Rekening </b>
-                        <span class="col-sm-8 p-0">: {{ $usr->no_rekening }} ({{ $usr->atas_nama }})</span>
+                        <span class="col-sm-8 p-0">: {{ $usr->no_rekening }} (an: {{ $usr->atas_nama }})</span>
                     </li>
                     <li class="list-group-item row">
                         <b class="col-sm-4 p-0">Nama Bank </b>

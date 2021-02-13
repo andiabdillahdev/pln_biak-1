@@ -33,7 +33,8 @@ class agentController extends Controller
 
     public function index_agent(){
         $laporan = Laporan::orderBy('id', 'desc')->get();
-        return view('landing.index', compact('laporan'));
+        $reward = Reward::orderBy('id', 'desc')->get();
+        return view('landing.index', compact('laporan', 'reward'));
     }
 
     public function logout(Request $request)

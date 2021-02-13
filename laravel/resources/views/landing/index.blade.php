@@ -201,6 +201,7 @@
                   @if ($lap->id_users == Auth::user()->id)
                   @php
                   $cek = $cek + 1;
+                  $rwd = $reward->where('laporan_id', $lap->id)->first();
                   @endphp
                   <div class="col-md-8">
                     <div class="line_hr"></div>
@@ -209,6 +210,8 @@
                       <li class="item_laporan">Alamat Laporan : <span class="sub_item1">{{ $lap->alamat }}</span> </li>
                       <li class="item_laporan">Perihal Laporan : <span class="sub_item2">{{ $lap->perihal }}</span> </li>
                       <li class="item_laporan">Status Laporan : <span class="sub_item3 status_laporan">{{ $lap->status }}</span> </li>
+                      <li class="item_laporan">Nominal Reward : <span class="sub_item3"><b>{{ $rwd ? 'Rp. '.number_format($rwd->nominal) : "Tidak ada reward" }}</b></span> </li>
+                      <li class="item_laporan">Status Reward : <span class="sub_item3"><i>{{ $rwd ? $rwd->status : "Tidak ada reward" }}</i></span> </li>
                     </ul>
                   </div>
                   @endif
