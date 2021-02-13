@@ -32,9 +32,29 @@
               @csrf
 
               <div class="form-group">
-                <label for="alamat" class="labels_login">Nama</label>
-                <input type="name" class="form-control grid_control_form_auth @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="off" autofocus placeholder="Nama...">
+                <label for="alamat" class="labels_login">Nama Lengkap (Sesuai KTP)</label>
+                <input type="name" class="form-control grid_control_form_auth @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="off" autofocus placeholder="Nama Lengkap...">
                 @error('name')
+                <span class="invalid-feedback ml-5" role="alert">
+                  <strong>{{ $message }}</strong>
+                </span>
+                @enderror
+              </div>
+
+              <div class="form-group">
+                <label for="alamat" class="labels_login">Nomor KTP</label>
+                <input type="number" class="form-control grid_control_form_auth @error('no_ktp') is-invalid @enderror" name="no_ktp" value="{{ old('no_ktp') }}" required autocomplete="off" autofocus placeholder="Nomor KTP...">
+                @error('no_ktp')
+                <span class="invalid-feedback ml-5" role="alert">
+                  <strong>Nomor KTP telah digunakan</strong>
+                </span>
+                @enderror
+              </div>
+
+              <div class="form-group">
+                <label for="alamat" class="labels_login">Nomor Telepon</label>
+                <input type="number" class="form-control grid_control_form_auth @error('no_telepon') is-invalid @enderror" name="no_telepon" value="{{ old('no_telepon') }}" required autocomplete="off" autofocus placeholder="Nomor Telepon...">
+                @error('no_telepon')
                 <span class="invalid-feedback ml-5" role="alert">
                   <strong>{{ $message }}</strong>
                 </span>
@@ -46,7 +66,7 @@
                 <input type="email" class="form-control grid_control_form_auth @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="off" autofocus placeholder="Email...">
                 @error('email')
                 <span class="invalid-feedback ml-5" role="alert">
-                  <strong>{{ $message }}</strong>
+                  <strong>Email telah terdaftar di sistem</strong>
                 </span>
                 @enderror
               </div>
@@ -64,7 +84,7 @@
               </div>
             </form>
           </div>
-          <div class="note_auth" style="margin-top: -60px;">
+          <div class="note_auth">
             Sudah Punya Akun? <b><a href="{{url('/login')}}">Login</a></b>
          </div>
        </div>

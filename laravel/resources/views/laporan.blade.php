@@ -37,7 +37,7 @@
                             <select class="form-control select2-opt" name="agent" id="agent-select">
                                 <option value="">Pilih Agent</option>
                                 @foreach($users as $dta)
-                                <option value="{{ $dta->id }}">{{ $dta->name }}</option>
+                                <option value="{{ $dta->id }}">{{ $dta->name.' ('.$dta->no_ktp.')' }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -54,11 +54,12 @@
                             <tr>
                                 <th width="5"></th>
                                 <th width="10">No</th>
-                                <th>Nama</th>
-                                <th>Perihal</th>
+                                <th>KD Laporan</th>
+                                <th>Nama Agent</th>
+                                <th width="200">Perihal</th>
                                 <th width="50">Tanggal</th>
                                 <th width="150">Status/Progres</th>
-                                <th width="150">Aksi</th>
+                                <th width="50">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -124,6 +125,7 @@
                                 <option value="Laporan Diterima">Laporan Diterima</option>
                                 <option value="Sedang Ditinjau">Sedang Ditinjau</option>
                                 <option value="Selesai">Selesai</option>
+                                <option value="Laporan Ditolak">Laporan Ditolak</option>
                             </select>
                         </div>
                         <script type="text/javascript">
@@ -139,7 +141,7 @@
                         <b style="font-size: 18px;">%</b>
                     </div>
                 </div>
-                <div class="modal-footer row">
+                <div class="modal-footer row" style="padding: 20px 50px 20px 50px">
                     <div class="col-sm-4"></div>
                     <div class="col-sm-8">
                         <button type="submit" class="btn btn-primary mr-2">Update</button>
@@ -153,23 +155,81 @@
 
 <!-- MODAL HAPUS -->
 <div class="modal modal-del{{ $dta->id }}" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-sm" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Yakin ingin menghapus?</h4>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-      </button>
-  </div>
-  <div class="modal-body">
-    Agent yang membuat laporan tidak dapat melihat laporan ini lagi!
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Yakin ingin menghapus?</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Agent yang membuat laporan tidak dapat melihat laporan ini lagi!
+            </div>
+            <div class="modal-footer bg-whitesmoke br">
+                <a href="{{ url('admin/hapuslaporan/'.$dta->id) }}" role="button" class="btn btn-danger btn-primary">Hapus</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="modal-footer bg-whitesmoke br">
-    <a href="{{ url('admin/hapuslaporan/'.$dta->id) }}" role="button" class="btn btn-danger btn-primary">Hapus</a>
-    <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-</div>
-</div>
-</div>
+
+<!-- MODAL REWARD -->
+<div class="modal modal-reward{{ $dta->id }}" role="dialog" aria-labelledby="myModalLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">Berikan Reward Agent</h4>
+            </div>
+            <form method="POST" action="{{ url('admin/setreward') }}" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body" style="padding: 20px 50px 0 50px">
+                    <div class="form-group row">
+                        <input type="hidden" name="agent_id" value="{{ $dta->id_users }}">
+                        <input type="hidden" name="laporan_id" value="{{ $dta->id }}">
+                        <label class="col-sm-4 col-form-label">Kode Laporan</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" disabled="" value="{{ '#TA'.sprintf('%05s', $dta->id) }}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Nama Agent</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" disabled="" value="{{ $users->where('id', $dta->id_users)->first()->name }}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Nominal Reward</label>
+                        <div class="input-group col-sm-8" style="padding: 0 15px 0 15px;">
+                            <span class="input-group-addon">Rp.</span>
+                            <input type="number" class="form-control" name="nominal" placeholder="Nominal Reward...">
+                            <span class="input-group-addon">.00</span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Status Reward</label>
+                        <div class="col-sm-8">
+                            <textarea class="form-control" placeholder="Status Reward..." name="status" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-4 col-form-label">Bukti Transfer</label>
+                        <div class="col-sm-8">
+                            <input type="file" class="form-control foto_bukti" name="foto_bukti">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer row"  style="padding: 20px 50px 20px 50px">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-8">
+                        <button type="submit" class="btn btn-primary mr-2">Buat Reward</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 @endforeach
 
@@ -181,8 +241,10 @@
 <script>
     function format (dta) {
         return `<div style="margin-left: 40px;">
-        <b>Email: </b><span>`+dta.email+`</span><br><br>
-        <b>Alamat: </b><span>`+dta.alamat+`</span>
+        <div style="margin-bottom: 10px;"><b>Alamat Laporan: </b><span>`+dta.alamat+`</span></div>
+        <div style="margin-bottom: 10px;"><b>Email Agent: </b><span>`+dta.email+`</span></div>
+        <div style="margin-bottom: 10px;"><b>Telepon Agent: </b><span>`+dta.no_telepon+`</span></div>
+        `+dta.btn_reward+`
         <hr>
         </div>`;
     }
@@ -214,6 +276,7 @@
                     "defaultContent": ""
                 },
                 { data: 'no', name: 'no' },
+                { data: 'kd_laporan', name: 'kd_laporan' },
                 { data: 'nama', name: 'nama' },
                 { data: 'perihal', name: 'perihal' },
                 { data: 'tanggal', name: 'tanggal' },
@@ -300,6 +363,7 @@
             else if (value == 'Laporan Diterima') $('#set-progres'+id).val('50');
             else if (value == 'Sedang Ditinjau') $('#set-progres'+id).val('75');
             else if (value == 'Selesai') $('#set-progres'+id).val('100');
+            else if (value == 'Laporan Ditolak') $('#set-progres'+id).val('100');
         });
 
         $(document).on('click', '#view-media', function(e) {
@@ -316,6 +380,43 @@
             });
         });
 
+        $('.foto_bukti').change(function(e) {
+            var media = $(this).prop('files')[0];
+            var check = 0;
+            var ext = ['image/jpeg', 'image/png', 'image/bmp'];
+
+            $.each(ext, function(key, val) {
+                if (media.type == val) check = check + 1;
+            });
+
+            if (check == 0) {
+                Swal.fire({
+                    title: 'File Tidak Didukung',
+                    text: 'Masukkan file yang bertipe foto!',
+                    type: 'warning'
+                });
+                $(this).val('');
+            }
+        });
+
+        $(document).on('click', '.btn-reward', function() {
+            var action = $(this).attr('data-action');
+
+            if(action == 'inProgres') {
+                Swal.fire({
+                    title: 'Selesaikan Laporan',
+                    text: 'Laporan masih dalam progres. Selesaikan terlebih dahulu!',
+                    type: 'warning'
+                });
+            } else if(action == 'rewardDone') {
+                Swal.fire({
+                    title: 'Reward Telah Diberikan',
+                    text: 'Reward telah diberikan untuk laporan ini!',
+                    type: 'info'
+                });
+            }
+        });
+
         @isset ($_GET['success'])
         @if ($_GET['success'] == 'update') 
         Swal.fire({
@@ -324,7 +425,7 @@
             type: 'success'
         }).then(function() {
             window.history.pushState('', '', "{{ url('admin/laporan') }}")
-        });;
+        });
         @elseif ($_GET['success'] == 'delete') 
         Swal.fire({
             title: 'Berhasil Dihapus',
@@ -332,7 +433,15 @@
             type: 'success'
         }).then(function() {
             window.history.pushState('', '', "{{ url('admin/laporan') }}")
-        });;
+        });
+        @elseif ($_GET['success'] == 'setreward') 
+        Swal.fire({
+            title: 'Berhasil Diproses',
+            text: 'Reward berhasil dibuat!',
+            type: 'success'
+        }).then(function() {
+            window.history.pushState('', '', "{{ url('admin/laporan') }}")
+        });
         @endif
         @endisset
     });

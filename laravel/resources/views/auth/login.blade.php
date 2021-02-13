@@ -31,21 +31,16 @@
                                   @csrf
                                     <div class="form-group">
                                       <label for="alamat" class="labels_login">E-Mail</label>
-                                      <input type="email" class="form-control grid_control_form_auth @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
-                                        @error('email')
-                                        <span class="invalid-feedback ml-5" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                       @enderror
+                                      <input type="email" class="form-control grid_control_form_auth @if(Session::get('errors')) is-invalid @endif" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
                                     </div>
                                     <div class="form-group">
                                       <label for="perihal" class="labels_login">Password</label>
-                                      <input type="password" class="form-control grid_control_form_auth @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
-                                        @error('password')
+                                      <input type="password" class="form-control grid_control_form_auth @if(Session::get('errors')) is-invalid @endif" name="password" required autocomplete="current-password">
+                                        @if(Session::get('errors'))
                                             <span class="invalid-feedback ml-5" role="alert">
-                                                <strong>{{ $message }}</strong>
+                                                <strong>{{ Session::get('errors') }}</strong>
                                             </span>
-                                        @enderror
+                                        @endif
                                     </div>
                                     <div class="grid_button_box_auth">
                                       <button type="submit" class="btns-box-auth text-btns-auth bg_button_blue">Login</button>

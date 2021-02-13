@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Laporan;
+use App\Reward;
 use App\Media;
 use App\User;
 
@@ -65,10 +66,12 @@ class HomeController extends Controller
         return view('data-agent', compact('agent'));
     }
 
-    public function updatepassword(Request $request)
+    public function edtakunagent(Request $request)
     {
         $updt_agent = User::where('id', $request->id)->first();
-        $updt_agent->password = Hash::make($request->password);
+        $updt_agent->status = $request->status;
+        if ($request->password)
+            $updt_agent->password = Hash::make($request->password);
         $updt_agent->save();
 
         return redirect('admin/data-agent?success=true');
@@ -117,6 +120,30 @@ class HomeController extends Controller
         return response()->json($foto, 200);
     }
 
+    public function reward()
+    {
+        $reward = Laporan::orderBy('id', 'desc')->get();
+        $users = User::where('role', 'agent')->get();
+        return view('reward', compact('reward', 'users'));
+    }
+
+    public function setreward(Request $request)
+    {
+        $file =  $request->file('foto_bukti');
+        $nama_foto = 'transfer_'.time().'.'.$file->getClientOriginalExtension();
+        $reward = new Reward();
+        $reward->agent_id = $request->agent_id;
+        $reward->laporan_id = $request->laporan_id;
+        $reward->nominal = $request->nominal;
+        $reward->foto_bukti = $nama_foto;
+        $reward->status = $request->status;
+        $reward->save();
+
+        $file->move('assets/img/foto_bukti', $nama_foto);
+
+        return redirect('admin/laporan?success=setreward');
+    }
+
     public function laporanServerside(Request $request)
     {
         if ($request->req == 'dataLaporan') {
@@ -134,9 +161,27 @@ class HomeController extends Controller
                 $usr = User::where('id', $dta->id_users)->first();
                 $dta->nama = $usr->name;
                 $dta->email = $usr->email;
+                $dta->no_telepon = $usr->no_telepon;
+                $dta->kd_laporan = '#TA'.sprintf('%05s', $dta->id);
                 $dta->tanggal = date('d/m/Y', strtotime($dta->created_at));
-                $dta->status = '<b>'.$dta->status.' ('.$dta->progres.'%)'.'</b>';
 
+                // Button Reward
+                $fix = false;
+                $reward = Reward::all();
+                foreach ($reward as $rwd) {
+                    if ($rwd->laporan_id == $dta->id) $fix = true;
+                }
+
+                if ($dta->status != 'Selesai') {
+                    $btn_action = 'data-action="inProgres"';
+                } else if ($fix == true) {
+                    $btn_action = 'data-action="rewardDone"';                    
+                } else {
+                    $btn_action = 'data-toggle="modal" data-target=".modal-reward'.$dta->id.'"';
+                }
+                $dta->btn_reward = '<a href="#" class="btn btn-sm btn-warning btn-reward" '.$btn_action.' data-toggle1="tooltip" title="Berikan Reward Untuk Laporan Ini"><i class="fa fa-trophy"></i>&nbsp; Berikan Reward</a>';
+
+                $dta->status = '<b>'.$dta->status.' ('.$dta->progres.'%)'.'</b>';
                 $data[] = $dta;
                 $no = $no + 1;
             }
@@ -144,10 +189,10 @@ class HomeController extends Controller
             return Datatables::of($data)
             ->addColumn('action', function($dta) {
                 return '
-                <a href="#" class="btn btn-sm btn-primary" id="view-media" data-toggle="modal" data-target=".modal-foto" data-id="'.$dta->id.'" data-toggle1="tooltip" title="Lihat Lampiran Foto"><i class="fa fa-photo"></i></a>
-                <a href="#" class="btn btn-sm btn-success" data-toggle="modal" data-target=".modal-edt'.$dta->id.'" data-toggle1="tooltip" title="Update Status & Progres"><i class="fa fa-pencil"></i></a>
-                <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target=".modal-del'.$dta->id.'" data-toggle1="tooltip" title="Hapus Laporan"><i class="fa fa-trash"></i></a>';
-            })->rawColumns(['action', 'status'])->toJson();
+                <a href="#" class="text-primary" id="view-media" data-toggle="modal" data-target=".modal-foto" data-id="'.$dta->id.'" data-toggle1="tooltip" title="Lihat Lampiran Foto"><i class="fa fa-photo"></i>&nbsp;&nbsp;</a>
+                <a href="#" class="text-success" data-toggle="modal" data-target=".modal-edt'.$dta->id.'" data-toggle1="tooltip" title="Update Status & Progres"><i class="fa fa-pencil"></i>&nbsp;&nbsp;</a>
+                <a href="#" class="text-danger" data-toggle="modal" data-target=".modal-del'.$dta->id.'" data-toggle1="tooltip" title="Hapus Laporan"><i class="fa fa-trash"></i>&nbsp;&nbsp;</a>';
+            })->rawColumns(['action', 'status', 'btn_reward'])->toJson();
         } else if ($request->req == 'dataAgent') {
             $result = User::where('role', 'agent')->orderBy('id', 'desc')->get();
             $data = [];
@@ -156,6 +201,8 @@ class HomeController extends Controller
                 $dta->no = $no;
                 $dta->tggl_daftar = date('d/m/Y', strtotime($dta->created_at));
                 $dta->nama = $dta->name;
+                if ($dta->status == 'Active') $dta->status = '<span class="label label-table label-success">Active</span>';
+                else $dta->status = '<span class="label label-table label-danger">Suspend</span>';
                 $data[] = $dta;
                 $no = $no + 1;
             }
@@ -163,8 +210,30 @@ class HomeController extends Controller
             return Datatables::of($data)
             ->addColumn('action', function($dta) {
                 return '
-                <a href="#" class="btn btn-sm btn-primary" style="margin-bottom: 10px; margin-top: 10px;" data-toggle="modal" data-target=".modal-foto'.$dta->id.'"><i class="fa fa-key"></i> Update Password</a>';
-            })->rawColumns(['action'])->toJson();
+                <a href="#" class="btn btn-sm btn-primary" style="margin-bottom: 10px; margin-top: 10px;" data-toggle1="tooltip" title="Update Akun Agent" data-toggle="modal" data-target=".modal-foto'.$dta->id.'"><i class="fa fa-user"></i> Update Akun</a>
+                <a href="'.url('admin/reward?for_agent='.$dta->id).'" class="btn btn-sm btn-warning" data-toggle1="tooltip" title="Berikan Reward Untuk Agent Ini"><i class="fa fa-trophy"></i>&nbsp; Reward</a>';
+            })->rawColumns(['action', 'status'])->toJson();
+        } else if ($request->req == 'dataReward') {
+            $result = Reward::orderBy('id', 'desc')->get();
+            $data = [];
+            $no = 1;
+            foreach ($result as $dta) {
+                $user = User::where('id', $dta->agent_id)->first();
+                $dta->no = $no;
+                $dta->kd_laporan = '#TA'.sprintf('%05s', $dta->laporan_id);
+                $dta->nama_agent = $user->name.' ('.$user->no_ktp.')';
+                $dta->nominal = 'Rp. '.number_format($dta->nominal);
+                $data[] = $dta;
+                $no = $no + 1;
+            }
+
+            return Datatables::of($data)
+            ->addColumn('action', function($dta) {
+                return '
+                <a href="#" class="text-primary" id="detail-reward" data-toggle="modal" data-target=".modal-detail" data-id="'.$dta->id.'" data-toggle1="tooltip" title="Lihat Detail Reward"><i class="fa fa-lg fa-info-circle"></i>&nbsp;&nbsp;</a>
+                <a href="#" class="text-success" data-toggle="modal" data-target=".modal-edt'.$dta->id.'" data-toggle1="tooltip" title="Update Status Reward"><i class="fa fa-lg fa-pencil"></i>&nbsp;&nbsp;</a>
+                <a href="#" class="text-danger" data-toggle="modal" data-target=".modal-del'.$dta->id.'" data-toggle1="tooltip" title="Hapus Data Reward"><i class="fa fa-lg fa-trash"></i>&nbsp;&nbsp;</a>';
+            })->rawColumns(['action', 'status'])->toJson();
         }
     }
 }

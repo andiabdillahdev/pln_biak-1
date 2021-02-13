@@ -36,10 +36,10 @@ class LoginController extends Controller
      * @return void
      */
     public function __construct()
-	{
+    {
         $this->middleware('guest:admin')->except('logout');
         $this->middleware('guest:agent')->except('logout');
-	}
+    }
 
     public function login(Request $request)
     {
@@ -47,28 +47,30 @@ class LoginController extends Controller
         $this->validate($request,[
             'email'=> 'required|email',
             'password' => 'required'
-            ]);   
-         
-            $credential = [
-                'email' => $request->email,
-                'password' => $request->password,
-            ];
-    
-            if (Auth::attempt($credential)) {
-                $auth = Auth::user();
-                if ($auth->role == 'admin') {
-                    Auth::guard('admin')->attempt($credential);
-                    return redirect()->intended(route('home'));
-                }else{
+        ]);   
+
+        $credential = [
+            'email' => $request->email,
+            'password' => $request->password,
+        ];
+
+        if (Auth::attempt($credential)) {
+            $auth = Auth::user();
+            if ($auth->role == 'admin') {
+                Auth::guard('admin')->attempt($credential);
+                return redirect()->intended(route('home'));
+            }else{
+                if ($auth->status == 'Active') {
                     Auth::guard('agent')->attempt($credential);
                     return redirect()->intended(route('agent.home'));
+                } else {
+                    return redirect()->back()->withInput($request->only('username', 'password'))->with('errors', 'Akun ini sedang di suspend');
                 }
             }
-    
-            //return redirect()->back()->withInput($request->only('username', 'password'));
-    
-            return $this->sendFailedLoginResponse($request);
-            
+        }
+
+        return redirect()->back()->withInput($request->only('username', 'password'))->with('errors', 'Username atau password tidak sesuai');
+
     }
 
 }

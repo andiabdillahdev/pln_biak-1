@@ -73,6 +73,7 @@
 					<ul class="nav">
 						<li><a href="{{ url('home') }}" class="home-das"><i class="lnr lnr-home"></i> <span>Dashboard</span></a></li>
 						<li><a href="{{ url('admin/laporan') }}" class="laporan"><i class="fa fa-file-text-o"></i> <span>Data Laporan</span></a></li>
+						<li><a href="{{ url('admin/reward') }}" class="reward"><i class="fa fa-trophy"></i> <span>Reward</span></a></li>
 						<li><a href="{{ url('admin/data-agent') }}" class="data-agent"><i class="fa fa-users"></i> <span>Data Agent</span></a></li>
 					</ul>
 				</nav>
