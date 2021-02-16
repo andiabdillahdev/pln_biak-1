@@ -767,6 +767,118 @@ footer{
   margin-top: 20px;
 }
 
+.home_top_agent img{
+  /* background-image: url("/landing/images/background_top_agent.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed; */
+  width: 100%;
+}
+
+.image_fail img{
+  width: 100%;
+}
+
+.top_agent_info{
+  margin-top: 78px;
+}
+
+.top_agent_info_reward{
+  margin-top: 78px;
+  background: #0286FF;
+  padding: 50px;
+}
+
+.title_info{
+  font-family: 'Raleway', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 40px;
+  line-height: 47px;
+  text-decoration-line: underline;
+  color: #3D3D3D;
+}
+
+.card_box_info{
+  background: #ffffff;
+  box-shadow: 0px 4px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+}
+
+.text_info_agent{
+  font-family: 'Raleway', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 32px;
+  line-height: 150.4%;
+  color: #0286FF;
+  text-align: left;
+}
+
+.pd_info{
+  padding: 30px;
+}
+
+.grid_text_info{
+  position: relative;
+  top: 40px;
+}
+
+.title_reward{
+  font-family: 'Raleway', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 51px;
+  line-height: 148.4%;
+  text-decoration-line: underline;
+  color: #FFFFFF;
+}
+
+.text_reward{
+  font-family: 'Raleway', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 32px;
+  line-height: 155.4%;
+  color: #FFFFFF;
+}
+
+.notif_reward{
+  background: #FFF200;
+  border-radius: 20px;
+  padding: 10px;
+}
+
+.notif_reward span{
+  font-family: 'Raleway', sans-serif;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 32px;
+  line-height: 155.4%;
+  color: #000000;
+}
+
+.note_reward{
+  font-family: 'Raleway', sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 18px;
+  line-height: 155.4%;
+  color: #FFFFFF;
+  position: relative;
+  top: 20px;
+}
+
+.image-reward{
+  width: 100%;
+}
+
+.image_info{
+  width: 100%;
+}
+
+
 
 @media only screen and (max-width:576px){
 
@@ -1071,7 +1183,20 @@ body{
 
  .note_auth{
   padding-bottom: 90px;
-}
+  }
+
+  .title_info{
+    font-size: 18px;
+  }
+
+  .text_info_agent{
+    font-size: 15px;
+  }
+
+  .image_fail_size{
+    position: relative;
+    
+  }
 
 
 }

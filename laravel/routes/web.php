@@ -12,6 +12,7 @@
 */
 
 Route::get('/', 'agentController@index_agent');
+Route::get('/laporan', 'agentController@laporan_index');
 
 Auth::routes();
 
